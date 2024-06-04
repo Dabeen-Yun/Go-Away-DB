@@ -47,8 +47,14 @@ const Camera = ({ navigation }) => {
       if (!response.ok) throw new Error(`Server responded with status ${response.status}`);
       const result = await response.json();
       console.log("SUCCESS:", result);
+      const { prediction } = result;
+      const [machineName, confidence, machineDescription, videoUrl] = prediction[0];
 
-      navigation.navigate('CameraResult', { result, imageUri: image.uri });
+      if (confidence < 80) {
+        setUploadFailed(true);
+      } else {
+        navigation.navigate('CameraResult', { result, imageUri: image.uri });
+      }
     } catch (error) {
       console.error('ERROR:', error);
       setUploadFailed(true);
